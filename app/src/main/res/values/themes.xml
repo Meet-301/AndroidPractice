@@ -2,4 +2,6 @@
 <resources>
 
     <style name="Theme.KotlinFirstApp" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.DiceRoller" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
