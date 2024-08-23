@@ -15,5 +15,5 @@ fun ScreenAUI(navController: NavHostController) {
         Text(text = "Screen A", modifier = Modifier.clickable {
             navController.navigate(ScreenB)
         })
-    }e
+    }
 }
