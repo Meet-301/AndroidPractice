@@ -1,6 +1,5 @@
 package com.example.contactapp.data.tables
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -9,6 +8,7 @@ data class Contacts(
                     @PrimaryKey(autoGenerate = true) var id : Int? = null,
                     var name: String,
                     var number: String,
-                    var email: String,
-                    var dob : Long,
-                    var profile : ByteArray)
+                    var email: String
+//                    var dob : Long,
+//                    var profile : ByteArray
+)
