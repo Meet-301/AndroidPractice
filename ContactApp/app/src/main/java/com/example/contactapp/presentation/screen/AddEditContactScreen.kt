@@ -1,5 +1,7 @@
 package com.example.contactapp.presentation.screen
 
+import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,6 +47,7 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
     var txtName by rememberSaveable { mutableStateOf("") }
     var txtNumber by rememberSaveable { mutableStateOf("") }
     var txtEmail by rememberSaveable { mutableStateOf("") }
+    var context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)  {
         Spacer(modifier = Modifier.height(30.dp))
@@ -53,9 +57,8 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
         Spacer(modifier = Modifier.height(50.dp))
 
         Row {
-            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null, modifier = Modifier.size(55.dp))
             Spacer(modifier = Modifier.size(10.dp))
-            TextField(value = txtName, placeholder = {Text(text = "Name")} , onValueChange = {
+            TextField(value = txtName, leadingIcon = {Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null)} , placeholder = {Text(text = "Name")} , onValueChange = {
                 txtName = it
             }, colors = TextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent))
         }
@@ -63,9 +66,8 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
         Spacer(modifier = Modifier.height(50.dp))
 
         Row {
-            Icon(imageVector = Icons.Filled.Call, contentDescription = null, modifier = Modifier.size(45.dp))
             Spacer(modifier = Modifier.size(10.dp))
-            TextField(value = txtNumber, placeholder = {Text(text = "Number")} , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) , onValueChange = {
+            TextField(value = txtNumber, leadingIcon = {Icon(imageVector = Icons.Filled.Call, contentDescription = null)}, placeholder = {Text(text = "Number")} , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) , onValueChange = {
                 txtNumber = it
             }, colors = TextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent))
         }
@@ -73,9 +75,8 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
         Spacer(modifier = Modifier.height(50.dp))
 
         Row {
-            Icon(imageVector = Icons.Filled.Email, contentDescription = null, modifier = Modifier.size(50.dp))
             Spacer(modifier = Modifier.size(10.dp))
-            TextField(value = txtEmail, placeholder = {Text(text = "Email")} , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email) , onValueChange = {
+            TextField(value = txtEmail, leadingIcon = {Icon(imageVector = Icons.Filled.Email, contentDescription = null)} ,placeholder = {Text(text = "Email")} , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email) , onValueChange = {
                 txtEmail = it
             }, colors = TextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent))
         }
@@ -84,9 +85,26 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Button(onClick = {
-                dbObject.saveUpdateContact(Contacts(name = txtName, number = txtNumber, email = txtEmail))
-                navController.navigateUp()
-             }, colors = ButtonDefaults.buttonColors(Color.Black), modifier = Modifier.fillMaxWidth(.8f)) {
+
+                if (txtName.isEmpty() || txtNumber.isEmpty() || txtEmail.isEmpty()) {
+                    Toast.makeText(context, "Please Fill All Fields", Toast.LENGTH_SHORT).show()
+                }
+                else if (txtNumber.length != 10) {
+                    Toast.makeText(context, "Invalid Number", Toast.LENGTH_SHORT).show()
+                }
+                else if (!Patterns.EMAIL_ADDRESS.matcher(txtEmail).matches()) {
+                    Toast.makeText(context, "Invalid Email", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    if (dbObject.isContactAlreadyExist(name = txtName, number = txtNumber).isNotEmpty() || dbObject.isNumberAlreadyExist(number = txtNumber).isNotEmpty()) {
+                        Toast.makeText(context, "Contact Already Exist", Toast.LENGTH_SHORT).show()
+                    } else {
+                        dbObject.saveUpdateContact(Contacts(name = txtName, number = txtNumber, email = txtEmail))
+                        navController.navigateUp()
+                    }
+                }
+
+             }, colors = ButtonDefaults.buttonColors(Color.Black), modifier = Modifier.fillMaxWidth(.7f)) {
                 Text(text = "Add")
             }
         }

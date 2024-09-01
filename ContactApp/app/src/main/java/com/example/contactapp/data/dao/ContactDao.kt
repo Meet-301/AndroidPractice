@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.contactapp.data.tables.Contacts
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ContactDao {
@@ -19,4 +18,9 @@ interface ContactDao {
     @Query("SELECT * FROM contact")
     fun getAllContacts() : List<Contacts>
 
+    @Query("SELECT * FROM contact WHERE name = :name AND number = :number")
+    fun isContactAlreadyExist(name : String, number : String) : List<Contacts>
+
+    @Query("SELECT * FROM contact WHERE number = :number")
+    fun isNumberAlreadyExist(number : String) : List<Contacts>
 }
