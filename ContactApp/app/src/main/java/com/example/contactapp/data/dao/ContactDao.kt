@@ -10,17 +10,18 @@ import com.example.contactapp.data.tables.Contacts
 interface ContactDao {
 
     @Upsert
-    fun saveUpdateContact(contact : Contacts)
+    suspend fun saveUpdateContact(contact : Contacts)
 
     @Delete
-    fun deleteContact(contact: Contacts)
+    suspend fun deleteContact(contact: Contacts)
 
     @Query("SELECT * FROM contact")
     fun getAllContacts() : List<Contacts>
 
     @Query("SELECT * FROM contact WHERE name = :name AND number = :number")
-    fun isContactAlreadyExist(name : String, number : String) : List<Contacts>
+    suspend fun isContactAlreadyExist(name : String, number : String) : List<Contacts>
 
     @Query("SELECT * FROM contact WHERE number = :number")
-    fun isNumberAlreadyExist(number : String) : List<Contacts>
+    suspend fun isNumberAlreadyExist(number : String) : List<Contacts>
+
 }

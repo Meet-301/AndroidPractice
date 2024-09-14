@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -33,9 +34,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.contactapp.R
 import com.example.contactapp.data.dao.ContactDao
 import com.example.contactapp.presentation.navigation.SaveEditScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(dbObject: ContactDao, NavController: NavHostController) {
+
+    var customCoroutine = rememberCoroutineScope()
 
     Scaffold(modifier = Modifier.fillMaxSize(), floatingActionButton = {
        FloatingActionButton(onClick = { NavController.navigate(SaveEditScreen) }) {
@@ -58,7 +62,11 @@ fun MainScreen(dbObject: ContactDao, NavController: NavHostController) {
                                .size(54.dp)
                                .fillMaxWidth(), maxLines = 1)
                        }
-                       IconButton(onClick = { dbObject.deleteContact(it) }) {
+                       IconButton(onClick = {
+                           customCoroutine.launch {
+                               dbObject.deleteContact(it)
+                           }
+                       }) {
                            Icon(imageVector = Icons.Filled.Delete, contentDescription = null, modifier = Modifier.size(50.dp), tint = Color.Red)
                        }
                    }

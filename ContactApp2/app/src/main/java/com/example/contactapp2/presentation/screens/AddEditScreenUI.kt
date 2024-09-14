@@ -1,4 +1,4 @@
-package com.example.contactapp.presentation.screen
+package com.example.contactapp2.presentation.screens
 
 import android.util.Patterns
 import android.widget.Toast
@@ -38,15 +38,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.contactapp.R
-import com.example.contactapp.data.dao.ContactDao
-import com.example.contactapp.data.tables.Contacts
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.contactapp2.ContactAppViewModel
+import com.example.contactapp2.R
+import com.example.contactapp2.database.tables.Contact
 
 @Composable
-fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController) {
-
+fun AddEditScreenUI(
+    navController: NavHostController,
+    viewModel: ContactAppViewModel,
+    id: Int?
+) {
     var txtName by rememberSaveable { mutableStateOf("") }
     var txtNumber by rememberSaveable { mutableStateOf("") }
     var txtEmail by rememberSaveable { mutableStateOf("") }
@@ -62,7 +63,7 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
 
         Row {
             Spacer(modifier = Modifier.size(10.dp))
-            TextField(value = txtName, leadingIcon = {Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null)} , placeholder = {Text(text = "Name")} , onValueChange = {
+            TextField(value = txtName, leadingIcon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null) } , placeholder = { Text(text = "Name") } , onValueChange = {
                 txtName = it
             }, colors = TextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent))
         }
@@ -71,7 +72,7 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
 
         Row {
             Spacer(modifier = Modifier.size(10.dp))
-            TextField(value = txtNumber, leadingIcon = {Icon(imageVector = Icons.Filled.Call, contentDescription = null)}, placeholder = {Text(text = "Number")} , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) , onValueChange = {
+            TextField(value = txtNumber, leadingIcon = { Icon(imageVector = Icons.Filled.Call, contentDescription = null) }, placeholder = { Text(text = "Number") } , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) , onValueChange = {
                 txtNumber = it
             }, colors = TextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent))
         }
@@ -80,7 +81,7 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
 
         Row {
             Spacer(modifier = Modifier.size(10.dp))
-            TextField(value = txtEmail, leadingIcon = {Icon(imageVector = Icons.Filled.Email, contentDescription = null)} ,placeholder = {Text(text = "Email")} , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email) , onValueChange = {
+            TextField(value = txtEmail, leadingIcon = { Icon(imageVector = Icons.Filled.Email, contentDescription = null) } ,placeholder = { Text(text = "Email") } , keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email) , onValueChange = {
                 txtEmail = it
             }, colors = TextFieldDefaults.colors(unfocusedContainerColor = Color.Transparent, focusedContainerColor = Color.Transparent))
         }
@@ -100,22 +101,15 @@ fun AddEditContactScreen(dbObject: ContactDao, navController: NavHostController)
                     Toast.makeText(context, "Invalid Email", Toast.LENGTH_SHORT).show()
                 }
                 else {
-                    customCoroutine.launch(Dispatchers.IO) {
-                        if (dbObject.isContactAlreadyExist(name = txtName, number = txtNumber).isNotEmpty() || dbObject.isNumberAlreadyExist(number = txtNumber).isNotEmpty()) {
-                            Toast.makeText(context, "Contact Already Exist", Toast.LENGTH_SHORT).show()
-                        } else {
-                            dbObject.saveUpdateContact(Contacts(name = txtName, number = txtNumber, email = txtEmail))
-                            navController.navigateUp()
-                        }
-                    }
-
+                    val contact = Contact(id =  id, name = txtName, email = txtEmail, phone = txtNumber)
+                    viewModel.addUpdateContact(contact)
+                    navController.navigateUp()
                 }
 
-             }, colors = ButtonDefaults.buttonColors(Color.Black), modifier = Modifier.fillMaxWidth(.7f)) {
+            }, colors = ButtonDefaults.buttonColors(Color.Black), modifier = Modifier.fillMaxWidth(.7f)) {
                 Text(text = "Add")
             }
         }
 
     }
-
 }
