@@ -29,12 +29,30 @@ class ContactAppViewModel @Inject constructor(private val repo: Repo) : ViewMode
         viewModelScope.launch {
 
             val contact = Contact(
+                id = state.value.id.value,
                 name = state.value.name.value,
                 number = state.value.number.value,
-                email = state.value.email.value
+                email = state.value.email.value,
+                dob = state.value.dob.value,
+                image = state.value.image.value
             )
 
             repo.upsertContact(contact)
+        }
+    }
+
+    fun deleteContact() {
+        val contact = Contact(
+            id = state.value.id.value,
+            name = state.value.name.value,
+            email = state.value.email.value,
+            number = state.value.number.value,
+            dob = state.value.dob.value,
+            image = state.value.image.value
+        )
+
+        viewModelScope.launch {
+            repo.deleteContact(contact)
         }
     }
 

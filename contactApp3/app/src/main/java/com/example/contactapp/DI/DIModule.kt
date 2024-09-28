@@ -18,13 +18,13 @@ object DIModule {
     @Provides
     @Singleton
     fun provideContactDatabase(application: Application) : ContactAppDatabase {
-        return Room.databaseBuilder(application, ContactAppDatabase::class.java, DB_NAME).build()
+        return Room.databaseBuilder(application, ContactAppDatabase::class.java, DB_NAME).fallbackToDestructiveMigration().build()
     }
 
     @Provides
     @Singleton
     fun provideRepository(db : ContactAppDatabase) : Repo {
-        return  Repo(db)
+        return Repo(db)
     }
 
 }
