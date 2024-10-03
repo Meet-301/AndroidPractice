@@ -12,8 +12,8 @@ import com.example.contactapp.ui_layer.viewmodel.ContactAppViewModel
 
 @Composable
 fun AppNavigation(viewModel : ContactAppViewModel = hiltViewModel()) {
-    val navController = rememberNavController()
 
+    val navController = rememberNavController()
     val state = viewModel.state.collectAsState()
 
     NavHost(navController = navController, startDestination = HomeScreen) {

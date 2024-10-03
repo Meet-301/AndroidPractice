@@ -93,7 +93,6 @@ fun HomeScreenUI(
                             val firstLetter = test2.map { it.first() }
                             Text(text = firstLetter.joinToString(""))
 
-
                         } else {
                             Image(
                                 bitmap = BitmapFactory.decodeByteArray(
